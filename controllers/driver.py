@@ -10,3 +10,4 @@ class DriverController:
 
     forward = axis(1)
     turn = axis(4)
+    shift = button(6)
