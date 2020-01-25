@@ -18,6 +18,12 @@ class DriveTrain(Trait):
         '''
         pass
 
+    def reset_encoders(self):
+        '''
+        Resets the left and right encoders on the drive train
+        '''
+        pass
+
     def get_wheel_diameter(self):
         '''
         Get the diameter of the drivetrain's wheels

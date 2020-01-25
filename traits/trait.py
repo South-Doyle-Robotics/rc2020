@@ -29,14 +29,14 @@ def implements(*traits):
         robot.printme()
     ```
     '''
-    def result(instance):
+    def result(class_definition):
         # For every trait that the class implements,
         # confirm the class implements all of the trait's methods
         for trait in traits:
             for method in dir(trait):
-                if not method in dir(instance) and method[0] != "_":
-                    raise Exception(instance.__name__ + " does not implement method `" + method + "` from trait `" + trait.__name__ + "`")
+                if not method in dir(class_definition) and method[0] != "_":
+                    raise Exception(class_definition.__name__ + " does not implement method `" + method + "` from trait `" + trait.__name__ + "`")
         # Add a method to the class that allows us to check which traits the class implements
-        instance.implements = lambda self, trait: trait in traits
-        return instance
+        class_definition.implements = lambda self, trait: trait in traits
+        return class_definition
     return result

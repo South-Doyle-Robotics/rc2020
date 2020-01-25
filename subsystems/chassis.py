@@ -20,8 +20,12 @@ class Chassis:
     def get_wheel_diameter(self):
         return 0.1524
     
-    arcade_drive = DriveTrain.arcade_drive
+    def reset_encoders(self):
+        self.left_master.reset()
+        self.right_master.reset()
 
     def tank_drive(self, left, right):
         self.left_motors.set(left)
         self.right_motors.set(right)
+        
+    arcade_drive = DriveTrain.arcade_drive
