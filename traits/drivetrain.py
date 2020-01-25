@@ -45,7 +45,7 @@ class DriveTrain(Trait):
             else: return n
 
         forward = limit(forward)
-        turn = limit(turn)
+        turn = -limit(turn)
 
         if squared_inputs:
             forward = copysign(forward * forward, forward)

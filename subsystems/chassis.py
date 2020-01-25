@@ -1,6 +1,6 @@
 from wpilib import SpeedControllerGroup
 from hardware import Falcon
-from traits import implements, DriveTrain
+from traits import implements, DriveTrain, Gyro
 
 @implements(DriveTrain)
 class Chassis:
@@ -12,7 +12,7 @@ class Chassis:
         self.right_motors = SpeedControllerGroup(self.right_master, Falcon(4))
 
     def get_left_forward_revolutions(self):
-        return self.left_master.get_revolutions()
+        return -self.left_master.get_revolutions()
 
     def get_right_forward_revolutions(self):
         return self.right_master.get_revolutions()
@@ -25,7 +25,7 @@ class Chassis:
         self.right_master.reset()
 
     def tank_drive(self, left, right):
-        self.left_motors.set(left)
+        self.left_motors.set(-left)
         self.right_motors.set(right)
         
     arcade_drive = DriveTrain.arcade_drive

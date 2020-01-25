@@ -58,3 +58,6 @@ class Test:
         Overload me!
         '''
         pass
+
+    def is_done(self):
+        return self.END_DONE

@@ -28,8 +28,10 @@ class ForwardDriveCheck(Test):
         if r_revs < 0:
             raise Exception("Right encoder returned a negative distance after commanding positive speed")
 
+        self.chassis.tank_drive(0, 0)
         print("Test passed!")
-
+        print("Left encoder revolutions:", l_revs)
+        print("Right encoder revolutions:", r_revs)
 
 class TurnRightCheck(Test):
     '''
@@ -65,7 +67,11 @@ class TurnRightCheck(Test):
         if heading < 0:
             raise Exception("Robot turned right, but the gyro read the turned angle as " + str(heading) + " degrees")
 
+        self.chassis.tank_drive(0, 0)
         print("Test passed!")
+        print("Gyro heading:", heading)
+        print("Left encoder revolutions:", l_revs)
+        print("Right encoder revolutions:", r_revs)
 
 
 class TurnLeftCheck(Test):
@@ -102,4 +108,8 @@ class TurnLeftCheck(Test):
         if heading > 0:
             raise Exception("Robot turned left, but the gyro read the turned angle as " + str(heading) + " degrees")
 
+        self.chassis.tank_drive(0, 0)
         print("Test passed!")
+        print("Gyro heading:", heading)
+        print("Left encoder revolutions:", l_revs)
+        print("Right encoder revolutions:", r_revs)
