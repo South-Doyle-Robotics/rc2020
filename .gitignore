@@ -1,3 +1,8 @@
 .vscode
 __pycache__
 .DS_STORE
+*.ini
+.deploy_cfg
+.installer_config
+okpg_cache
+pip_cache
