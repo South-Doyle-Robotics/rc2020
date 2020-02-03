@@ -5,8 +5,8 @@ from math import pi
 
 @implements(DriveTrain)
 class Chassis:
-    LOW_GEAR_CONSTANT = 8.5
-    HIGH_GEAR_CONSTANT = 18.38
+    HIGH_GEAR_CONSTANT = 8.5
+    LOW_GEAR_CONSTANT = 18.38
 
     def __init__(self):
         self.left_master = Falcon(1)
