@@ -15,3 +15,6 @@ class ADXRS450:
         while heading < -180: heading += 360
         while heading >  180: heading -= 360
         return heading
+
+    def get_counterclockwise_degrees(self):
+        return -self.get_clockwise_degrees()

@@ -19,19 +19,19 @@ class ForwardDriveCheck(Test):
         self.chassis.tank_drive(0.35, 0.35)
 
     def testEnd(self):
-        l_revs = self.chassis.get_left_forward_revolutions()
-        r_revs = self.chassis.get_right_forward_revolutions()
+        l = self.chassis.get_left_distance()
+        r = self.chassis.get_right_distance()
 
-        if l_revs < 0:
+        if l < 0:
             raise Exception("Left encoder returned a negative distance after commanding positive speed")
 
-        if r_revs < 0:
+        if r < 0:
             raise Exception("Right encoder returned a negative distance after commanding positive speed")
 
         self.chassis.tank_drive(0, 0)
         print("Test passed!")
-        print("Left encoder revolutions:", l_revs)
-        print("Right encoder revolutions:", r_revs)
+        print("Left encoder distance:", l)
+        print("Right encoder distance:", r)
 
 class TurnRightCheck(Test):
     '''
@@ -55,13 +55,13 @@ class TurnRightCheck(Test):
 
     def testEnd(self):
         heading = self.gyro.get_clockwise_degrees()
-        l_revs = self.chassis.get_left_forward_revolutions()
-        r_revs = self.chassis.get_right_forward_revolutions()
+        l = self.chassis.get_left_distance()
+        r = self.chassis.get_right_distance()
 
-        if l_revs < 0:
+        if l < 0:
             raise Exception("Left encoder returned a negative distance after commanding positive speed")
 
-        if r_revs > 0:
+        if r > 0:
             raise Exception("Right encoder returned a positive distance after commanding negative speed")
 
         if heading < 0:
@@ -70,8 +70,8 @@ class TurnRightCheck(Test):
         self.chassis.tank_drive(0, 0)
         print("Test passed!")
         print("Gyro heading:", heading)
-        print("Left encoder revolutions:", l_revs)
-        print("Right encoder revolutions:", r_revs)
+        print("Left encoder distance:", l)
+        print("Right encoder distance:", r)
 
 
 class TurnLeftCheck(Test):
@@ -96,13 +96,13 @@ class TurnLeftCheck(Test):
 
     def testEnd(self):
         heading = self.gyro.get_clockwise_degrees()
-        l_revs = self.chassis.get_left_forward_revolutions()
-        r_revs = self.chassis.get_right_forward_revolutions()
+        l = self.chassis.get_left_distance()
+        r = self.chassis.get_right_distance()
 
-        if l_revs > 0:
+        if l > 0:
             raise Exception("Left encoder returned a positive distance after commanding negative speed")
 
-        if r_revs < 0:
+        if r < 0:
             raise Exception("Right encoder returned a negative distance after commanding positive speed")
 
         if heading > 0:
@@ -111,5 +111,5 @@ class TurnLeftCheck(Test):
         self.chassis.tank_drive(0, 0)
         print("Test passed!")
         print("Gyro heading:", heading)
-        print("Left encoder revolutions:", l_revs)
-        print("Right encoder revolutions:", r_revs)
+        print("Left encoder distance:", l)
+        print("Right encoder distance:", r)
