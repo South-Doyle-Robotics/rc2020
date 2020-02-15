@@ -17,10 +17,12 @@ class Chassis:
     def __init__(self):
         self.left_master = Falcon(LEFT_CHASSIS_MOTORS[0])
         self.left_motors = SpeedControllerGroup(
-            *list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:])))
+            self.left_master,
+            *list(map(Falcon, LEFT_CHASSIS_MOTORS[1:])))
 
         self.right_master = Falcon(RIGHT_CHASSIS_MOTORS[0])
         self.right_motors = SpeedControllerGroup(
+            self.right_master,
             *list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:])))
 
         self.shifter = DoubleSolenoid(0, 1)
