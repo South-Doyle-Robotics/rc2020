@@ -4,6 +4,7 @@ from hardware import Falcon, DoubleSolenoid
 from traits import implements, DriveTrain, Gyro
 from ctre import Orchestra
 from math import pi
+from os.path import dirname
 
 orchestra = Orchestra()
 
@@ -15,26 +16,15 @@ class Chassis:
 
     def __init__(self):
         self.left_master = Falcon(LEFT_CHASSIS_MOTORS[0])
-        self.raw_left_motors = [self.left_master] + \
-            list(map(Falcon, LEFT_CHASSIS_MOTORS[1:]))
-        self.left_motors = SpeedControllerGroup(*self.raw_left_motors)
+        self.left_motors = SpeedControllerGroup(
+            *list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:])))
 
         self.right_master = Falcon(RIGHT_CHASSIS_MOTORS[0])
-        self.raw_right_motors = [self.right_master] + \
-            list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:]))
-        self.right_motors = SpeedControllerGroup(*self.raw_right_motors)
+        self.right_motors = SpeedControllerGroup(
+            *list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:])))
 
         self.shifter = DoubleSolenoid(0, 1)
         self.set_low_gear()
-
-    def play_music(self):
-        for motor in self.raw_left_motors + self.raw_right_motors:
-            print("music add falcon ", orchestra.addInstrument(motor))
-        print("music load", orchestra.loadMusic("chrp/mario.chrp"))
-        print("music play", orchestra.play())
-
-    def stop_music(self):
-        orchestra.stop()
 
     def set_low_gear(self):
         self.shifter.forward()
@@ -61,7 +51,6 @@ class Chassis:
         return 0.1524
 
     def reset_encoders(self):
-
         self.left_master.reset()
         self.right_master.reset()
 
