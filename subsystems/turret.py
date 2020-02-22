@@ -8,8 +8,8 @@ from .camera import Limelight
 # We can use the Limelight to get the x_position of our centroid so we can center the turret
 
 
-# For whatever our turn motor is. Neos are 42, Falcons are 4096
-counts_per_revolution = 4096
+# For whatever our turn motor is. Neos are 42, Falcons are 2048
+counts_per_revolution = 42
 
 
 def encoder_to_angle(encoder_counts):
@@ -17,7 +17,7 @@ def encoder_to_angle(encoder_counts):
     Takes the encoder count of the turret motor, and converts it to
     an equivalent angle of the turret.
     '''
-    # 112.5 is the motor revolutions per 1 turret revolution. 4096 is the encoder count. (For Falcons)
+    # 112.5 is the motor revolutions per 1 turret revolution.
     # Probably should figure the motor revolutions per 1 turret revolution for the NEO550s.
     degrees_per_count = 360 / (112.5 * counts_per_revolution)
     return degrees_per_count * encoder_counts
@@ -42,7 +42,7 @@ class Turret:
         self.counterclockwise_limit_switch = DigitalInput(
             TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH)
 
-        # self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
+        self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
         self.turn_pid = PIDController(0.1, 0, 0)
 
         self.shoot_motor_1 = Falcon(motor_id_1)

@@ -1,7 +1,8 @@
 from hardware import SparkMax
+from tools import Timer
 
 
-class Singulator:
+class Magazine:
     '''
     This object is responsible for managing the singulator,
     which is both the intake and the magazine.
@@ -18,12 +19,18 @@ class Singulator:
         self.left_agitator = SparkMax(left_agitator_id)
         self.right_agitator = SparkMax(right_agitator_id)
 
-    def ready_to_index(self):
+        # Timer used to get motor up to speed
+        self.ready_timer = Timer()
+        self.is_ready_state = False
+
+    def is_ready(self):
         '''
         Checks if the motor underneath the shooter is at maximum voltage.
         '''
-        if self.feed_motor.get_percent_output() == 0.5:
-            return True
+        if self.ready_timer.is_done():
+            self.is_ready_state = True
+
+        return self.is_ready_state
 
     def stop(self):
         '''
@@ -33,6 +40,7 @@ class Singulator:
         self.feed_motor.stopMotor()
         self.left_agitator.stopMotor()
         self.right_agitator.stopMotor()
+        self.is_ready = False
 
     def agitate(self):
         '''
@@ -50,3 +58,4 @@ class Singulator:
         '''
         self.feed_motor.set_percent_output(0.5)
         self.agitate()
+        self.ready_timer.wait(0.5)
