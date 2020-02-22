@@ -1,6 +1,6 @@
 from .chassis import Chassis
 from .turret import Turret
-from .pathfinder import PathfinderController
+from .path import Path
 
 __all__ = ["camera", "chassis", "climber",
-           "intake", "magazine", "turret", "pathfinder"]
+           "intake", "magazine", "turret", "path"]
