@@ -38,6 +38,18 @@ class DriveTrain(Trait):
         '''
         pass
 
+    def set_low_gear(self):
+        '''
+        Puts the drive train in low gear
+        '''
+        pass
+
+    def set_high_gear(self):
+        '''
+        Puts the drive train in high gear
+        '''
+        pass
+
     def arcade_drive(self, forward, turn, squared_inputs=True):
         def limit(n):
             if n < -1: return -1

@@ -17,3 +17,13 @@ class Gyro(Trait):
         The result of this function may range from -180 to 180.
         '''
         pass
+
+    def get_counterclockwise_degrees(self):
+        '''
+        This method returns the robot's angle such that clockwise is negative and counterclockwise is positive.
+
+        The result of this function may range from -180 to 180.
+
+        This method is important because WPILIB Ramsete controllers require counterclockwise to be positive.
+        '''
+        pass

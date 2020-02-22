@@ -4,5 +4,6 @@ __pycache__
 *.ini
 .deploy_cfg
 .installer_config
-okpg_cache
+opkg_cache
 pip_cache
+output

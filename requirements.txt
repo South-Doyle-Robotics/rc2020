@@ -1,0 +1,7 @@
+pybind11
+pyfrc
+robotpy-ctre
+robotpy-rev
+robotpy-commands-v1
+robotpy-rev-color
+frc-characterization

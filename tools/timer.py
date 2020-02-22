@@ -12,7 +12,7 @@ class Timer:
 
     def get(self):
         '''
-        Get the amount of time passed since the timer began
+        Get the amount of time passed since the timer began (in seconds)
         '''
         return time() - self.start_time
 
