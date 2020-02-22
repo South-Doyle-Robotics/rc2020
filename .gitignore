@@ -6,3 +6,4 @@ __pycache__
 .installer_config
 opkg_cache
 pip_cache
+output
