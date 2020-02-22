@@ -16,14 +16,12 @@ class Chassis:
 
     def __init__(self):
         self.left_master = Falcon(LEFT_CHASSIS_MOTORS[0])
-        self.left_motors = SpeedControllerGroup(
-            self.left_master,
-            *list(map(Falcon, LEFT_CHASSIS_MOTORS[1:])))
+        self.left_motors = [self.left_master, *
+                            list(map(Falcon, LEFT_CHASSIS_MOTORS[1:]))]
 
         self.right_master = Falcon(RIGHT_CHASSIS_MOTORS[0])
-        self.right_motors = SpeedControllerGroup(
-            self.right_master,
-            *list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:])))
+        self.right_motors = [self.right_master, *
+                             list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:]))]
 
         self.shifter = DoubleSolenoid(0, 1)
         self.set_low_gear()
@@ -57,7 +55,10 @@ class Chassis:
         self.right_master.reset()
 
     def tank_drive(self, left, right):
-        self.left_motors.set(-left)
-        self.right_motors.set(right)
+        for motor in self.left_motors:
+            motor.set(-left)
+
+        for motor in self.right_motors:
+            motor.set(right)
 
     arcade_drive = DriveTrain.arcade_drive
