@@ -30,7 +30,16 @@ class Path:
         self.ramsete = RamseteController(2, 0.7)
         self.drive_kinematics = DifferentialDriveKinematics(trackwidth)
 
+        self.are_wheel_speeds_zero = False
         self.timer = Timer()
+
+    def is_done(self):
+        '''
+        is_done(self) -> bool
+
+        Returns whether or not the path is done.
+        '''
+        return self.are_wheel_speeds_zero
 
     def reset(self, chassis, gyro):
         '''
@@ -52,6 +61,7 @@ class Path:
         # By reseting these sensors, we look like weve never run the path at all!
         chassis.reset_encoders()
         gyro.reset()
+        self.are_wheel_speeds_zero = False
 
         # The odometry object also needs to be re-initialized
         # so that it forgets the state from the previous run
@@ -62,7 +72,7 @@ class Path:
 
     def follow(self, chassis, gyro):
         '''
-        This updates the PathfinderController and drives the chassis to follow the path
+        This updates the Path and drives the chassis to follow the path
 
         update(self, chassis: traits.DriveTrain, gyro: traits.Gyro)
 
@@ -73,6 +83,9 @@ class Path:
         # Assert the objects implement the proper traits
         assert chassis.implements(DriveTrain)
         assert gyro.implements(Gyro)
+
+        if self.is_done():
+            return
 
         # Set the chassis to low gear for more precise movements
         chassis.set_low_gear()
@@ -96,6 +109,9 @@ class Path:
             chassis_speed = self.ramsete.calculate(current_pose, target_pose)
             wheel_speeds = self.drive_kinematics.toWheelSpeeds(chassis_speed)
             l, r = wheel_speeds.left, wheel_speeds.right
+
+            if abs(l) == 0 and abs(r) == 0:
+                self.are_wheel_speeds_zero = True
 
             # Convert the left and right wheel speeds to volts using the characterized constants,
             # and then convert those to percent values from -1 to 1

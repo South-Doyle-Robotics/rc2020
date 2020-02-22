@@ -3,13 +3,11 @@ from subsystems.turret import Turret
 from wpilib import Joystick, run, TimedRobot
 from wpilib import TimedRobot, run
 from controllers import DriverController, ShooterController
-from subsystems import Chassis, Turret, Path
+from subsystems import Chassis, Turret, Autonomous
 from hardware import ADXRS450
 from tools import Timer
 from constants import kS, kV, TRACKWIDTH
 from wpilib.trajectory import TrajectoryUtil
-# from tests import ForwardDriveCheck, TurnLeftCheck, TurnRightCheck
-# from subsystems.camera import Limelight
 
 
 start = TrajectoryUtil.fromPathweaverJson(
@@ -26,10 +24,15 @@ class Kthugdess(TimedRobot):
 
         self.test = None
         self.chassis.reset_encoders()
-        self.path = Path(kS, kV, TRACKWIDTH, start)
+
+        self.auto = Autonomous(kS, kV, TRACKWIDTH, [
+                               start, start, start, start])
+
+        self.reset()
 
     def reset(self):
-        self.path.reset(self.chassis, self.gyro)
+        self.auto.reset()
+        self.auto.start(self.chassis, self.gyro)
 
     teleopInit = reset
     autonomousInit = reset
@@ -44,7 +47,11 @@ class Kthugdess(TimedRobot):
             self.chassis.set_low_gear()
 
     def autonomousPeriodic(self):
-        self.path.follow(self.chassis, self.gyro)
+        if self.auto.is_paused():
+            print("SHOOT")
+            self.auto.resume(self.chassis, self.gyro)
+        elif not self.auto.is_done():
+            self.auto.update(self.chassis, self.gyro)
 
     def testInit(self):
         self.test = TurnRightCheck(self.chassis, self.gyro)
