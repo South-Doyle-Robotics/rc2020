@@ -42,7 +42,7 @@ class Turret:
         self.counterclockwise_limit_switch = DigitalInput(
             TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH)
 
-        self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
+        # self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
         self.turn_pid = PIDController(0.1, 0, 0)
 
         self.shoot_motor_1 = Falcon(motor_id_1)
@@ -74,10 +74,7 @@ class Turret:
         elif self.counterclockwise_limit_switch.get() and motor_speed > 0:
             self.turn_motor.set_percent_output(motor_speed)
 
-        self.shoot_motor_1.set_percent_output(.2)
-        self.shoot_motor_2.set_percent_output(-.2)
-
-    def run_shooter(self):
+    def shoot(self):
         '''
         The wheel to shoot will rev up completely before balls start feeding
         in from the singulator.
@@ -86,16 +83,15 @@ class Turret:
         self.shoot_motor_1.set_percent_output(0.9)
         self.shoot_motor_2.set_percent_output(-0.9)
 
-    def stop_shooting(self):
+    def idle(self):
         '''
         Resets the motors back to their default state.
         '''
-        self.shoot_motor_1.set_percent_output(0.2)
-        self.shoot_motor_2.set_percent_output(-0.2)
+        self.shoot_motor_1.set_percent_output(0.5)
+        self.shoot_motor_2.set_percent_output(-0.5)
 
-    def at_full_speed(self):
+    def is_full_speed(self):
         '''
         Returns if the motor is at full speed or not.
         '''
-        if self.shoot_motor_1.get_percent_output() == 0.9 and self.shoot_motor_2.get_percent_output() == -0.9:
-            return True
+        return self.shoot_motor_1.get_percent_output() == 0.9 and self.shoot_motor_2.get_percent_output() == -0.9

@@ -7,17 +7,16 @@ class Singulator:
     which is both the intake and the magazine.
     '''
 
-    def __init__(self, ball_feed_id, left_id, right_id, intake_id):
+    def __init__(self, feed_id, left_agitator_id, right_agitator_id):
         '''
         Feed_motor: The motor that directly spins balls into the shooter
         Left motor: The motor that indexes balls from the left
         Right motor: The motor that indexes balls from the right
         Intake motor: The motor that takes in balls
         '''
-        self.feed_motor = SparkMax(ball_feed_id)
-        self.left_motor = SparkMax(left_id)
-        self.right_motor = SparkMax(right_id)
-        self.intake_motor = SparkMax(intake_id)
+        self.feed_motor = SparkMax(feed_id)
+        self.left_agitator = SparkMax(left_agitator_id)
+        self.right_agitator = SparkMax(right_agitator_id)
 
     def ready_to_index(self):
         '''
@@ -26,34 +25,28 @@ class Singulator:
         if self.feed_motor.get_percent_output() == 0.5:
             return True
 
-    def stop_all_motors(self):
+    def stop(self):
         '''
         Stops all the motors. 
         Note: It's better to use stopMotor() instead of setting the percentage to zero.
         '''
         self.feed_motor.stopMotor()
-        self.left_motor.stopMotor()
-        self.right_motor.stopMotor()
-        self.intake_motor.stopMotor()
+        self.left_agitator.stopMotor()
+        self.right_agitator.stopMotor()
 
-    def update(self, turret_at_full_speed=bool):
+    def agitate(self):
         '''
-        This feeds balls into the shooter, starting with the feed motor. 
-        When the feed motor reaches the desired output, the other motors will activate
-        to push the other balls in.
         '''
-        if turret_at_full_speed:
-            self.feed_motor.set_percent_output(0.5)
-            if self.ready_to_index():
-                self.left_motor.set_percent_output(-0.5)
-                self.right_roll_motor.set_percent_output(0.5)
-                self.run_intake()
+        if self.ready_to_index():
+            self.left_agitator.set_percent_output(-0.5)
+            self.right_agitator.set_percent_output(0.5)
 
-    def run_intake(self):
+    def feed(self):
         '''
         A separate function for running the intake,
         as we will use it to both pull in balls and run with the magazine.
 
         This is most likely a terrible, terrible idea.
         '''
-        self.intake_motor.set_percent_output(-0.5)
+        self.feed_motor.set_percent_output(0.5)
+        self.agitate()
