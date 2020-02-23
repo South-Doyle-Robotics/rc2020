@@ -1,8 +1,9 @@
 from wpilib import SpeedControllerGroup, DigitalInput
 from wpilib.controller import PIDController
-from constants import TURRET_CLOCKWISE_LIMIT_SWITCH, TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH, TURRET_TURN_MOTOR
+from constants import TURRET_CLOCKWISE_LIMIT_SWITCH, TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH, TURRET_TURN_MOTOR, TURRET_SHOOT_MOTORS
 from hardware import SparkMax, Falcon
 from math import pi
+from tools import Timer
 
 from .camera import Limelight
 # We can use the Limelight to get the x_position of our centroid so we can center the turret
@@ -36,17 +37,20 @@ class Turret:
     The object thats responsible for managing the shooter
     '''
 
-    def __init__(self, motor_id_1, motor_id_2):
+    def __init__(self):
         self.clockwise_limit_switch = DigitalInput(
             TURRET_CLOCKWISE_LIMIT_SWITCH)
         self.counterclockwise_limit_switch = DigitalInput(
             TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH)
 
         self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
-        self.turn_pid = PIDController(0.1, 0, 0)
+        self.turn_pid = PIDController(0.4, 0.001, 0.02)
 
-        self.shoot_motor_1 = Falcon(motor_id_1)
-        self.shoot_motor_2 = Falcon(motor_id_2)
+        self.shoot_motor_1 = Falcon(TURRET_SHOOT_MOTORS[0])
+        self.shoot_motor_2 = Falcon(TURRET_SHOOT_MOTORS[1])
+        self.timer = Timer()
+
+        self.limelight = Limelight()
 
     def set_target_angle(self, angle):
         '''
@@ -66,7 +70,8 @@ class Turret:
         The shoot motor is constantly running at a low percentage until we need it.
         '''
 
-        motor_speed = self.turn_pid.calculate(self.turn_motor.get_counts())
+        motor_speed = self.turn_pid.calculate(
+            self.limelight.get_target_screen_x())
 
         if self.clockwise_limit_switch.get() and motor_speed < 0:
             self.turn_motor.set_percent_output(motor_speed)
@@ -80,18 +85,30 @@ class Turret:
         in from the singulator.
         '''
         # One of the motors will be reversed, so make sure the shoot motor has the correct ID!
-        self.shoot_motor_1.set_percent_output(0.9)
-        self.shoot_motor_2.set_percent_output(-0.9)
+        speed = self.shoot_motor_1.get_percent_output()
+        if speed < 1:
+            speed += 0.02
+        elif speed > 1:
+            speed -= 0.02
+
+        self.shoot_motor_1.set_percent_output(speed)
+        self.shoot_motor_2.set_percent_output(-speed)
 
     def idle(self):
         '''
         Resets the motors back to their default state.
         '''
-        self.shoot_motor_1.set_percent_output(0.5)
-        self.shoot_motor_2.set_percent_output(-0.5)
+        speed = self.shoot_motor_1.get_percent_output()
+        if speed < 0.5:
+            speed += 0.02
+        elif speed > 0.5:
+            speed -= 0.02
+
+        self.shoot_motor_1.set_percent_output(speed)
+        self.shoot_motor_2.set_percent_output(-speed)
 
     def is_full_speed(self):
         '''
         Returns if the motor is at full speed or not.
         '''
-        return self.shoot_motor_1.get_percent_output() == 0.9 and self.shoot_motor_2.get_percent_output() == -0.9
+        self.timer.get() > 0.4

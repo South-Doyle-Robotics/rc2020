@@ -4,7 +4,11 @@ RIGHT_CHASSIS_MOTORS = [3, 4]
 TURRET_CLOCKWISE_LIMIT_SWITCH = 0
 TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH = 1
 TURRET_TURN_MOTOR = 5
-TURRET_SHOOT_MOTORS = [1, 2]  # Or whatever these values will be.
+TURRET_SHOOT_MOTORS = [9, 10]  # Or whatever these values will be.
+
+MAGAZINE_FEED_MOTOR = 6
+MAGAZINE_LEFT_MOTOR = 7
+MAGAZINE_RIGHT_MOTOR = 8
 
 SINGULATOR_IDS = [0, 0, 0, 0]  # Plug in these values later. Cheers!
 

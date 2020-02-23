@@ -15,5 +15,5 @@ class DriverController:
     shift = button(6)
 
     # Turret and Singulator
-    shoot = button(2)
+    shoot = button(1)
     intake = button(3)

@@ -43,7 +43,7 @@ class Limelight:
 
         Ranges from -1 to 1
         '''
-        return self.table.getNumber("tx", 0.0) / MAX_HORIZONTAL_DEGREES
+        return self.table.getNumber("tx", 0.0) / self.MAX_HORIZONTAL_DEGREES
 
     def get_target_screen_y(self):
         '''
@@ -52,7 +52,7 @@ class Limelight:
 
         Ranges from -1 to 1
         '''
-        return self.table.getNumber("ty", 0.0) / MAX_VERTICAL_DEGREES
+        return self.table.getNumber("ty", 0.0) / self.MAX_VERTICAL_DEGREES
 
 
 class Target:
