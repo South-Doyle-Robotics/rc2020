@@ -5,7 +5,6 @@ from hardware import SparkMax
 from math import pi
 
 from .camera import Limelight
-# We can use the Limelight to get the x_position of our centroid so we can center the turret
 
 
 def encoder_to_angle(encoder_counts):
@@ -63,3 +62,15 @@ class Turret:
 
         elif self.counterclockwise_limit_switch.get() and motor_speed > 0:
             self.turn_motor.set_percent_output(motor_speed)
+
+        # Only turn to the target if the limelight can actually see the target. Otherwise, there can be someone who moves the turret with the controller.
+        '''
+        if self.limelight.has_target:
+            # self.motor_speed sets to whatever the PID calculates
+        '''
+
+    def rotate_turret(self, direction):
+        '''
+        This is used to manually turn the turret so that the limelight is in sight of the target.
+        '''
+        self.turn_motor.set_percentage_output(direction)
