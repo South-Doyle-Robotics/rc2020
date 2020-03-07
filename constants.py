@@ -5,6 +5,13 @@ TURRET_CLOCKWISE_LIMIT_SWITCH = 0
 TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH = 1
 TURRET_TURN_MOTOR = 5
 
+# This is the motor that feeds balls into the shooter.
+MAGAZINE_INDEX_MOTOR = None
+# This is the motor that takes in balls from the intake.
+MAGAZINE_FROM_INTAKE_MOTOR = None
+# This is the motor that moves the balls into the indexer.
+MAGAZINE_RIGHT_MOTOR = None
+
 TRACKWIDTH = 0.6477
 RAMSETE_MAX_VELOCITY = 4
 RAMSETE_MAX_ACCELERATION = 3

@@ -1,3 +1,4 @@
+
 from os.path import dirname, basename
 from subsystems.turret import Turret
 from wpilib import Joystick, run, TimedRobot
@@ -9,6 +10,7 @@ from tools import Timer
 from constants import kS, kV, TRACKWIDTH
 from wpilib.trajectory import TrajectoryUtil
 from glob import glob as files
+
 
 filenames = files(dirname(__file__) + "/paths/*.json")
 try:
