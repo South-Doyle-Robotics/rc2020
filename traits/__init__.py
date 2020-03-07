@@ -6,4 +6,5 @@ from .drivetrain import DriveTrain
 from .gyro import Gyro
 from .controller import Controller
 
-__all__ = ["drivetrain", "encoder", "motor", "trait", "gyro", "controller"]
+__all__ = ["drivetrain", "encoder", "motor",
+           "trait", "gyro", "controller"]

@@ -1,9 +1,10 @@
 from ctre import WPI_TalonFX, FeedbackDevice
-from traits import Motor, Encoder, implements
+from traits import Motor, Encoder, Timed, implements
+from tools import Timed
 
 
 @implements(Encoder, Motor)
-class Falcon(WPI_TalonFX):
+class Falcon(WPI_TalonFX, Timed):
     def __init__(self, can_id):
         super().__init__(can_id)
         self.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor)
@@ -30,3 +31,10 @@ class Falcon(WPI_TalonFX):
 
     def reset(self):
         self.setSelectedSensorPosition(0)
+
+    def delayed_set_percent_output(self, percent, seconds):
+        self.do(
+            self.set_percent_output,
+            seconds,
+            percent
+        )
