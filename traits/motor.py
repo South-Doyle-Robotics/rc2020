@@ -1,5 +1,6 @@
 from . import Trait
 
+
 class Motor(Trait):
     '''
     A generic motor object on the bot
@@ -19,5 +20,13 @@ class Motor(Trait):
         This gets the last percent output voltage set by the `set_percent` method.
 
         The returned value will range from -1 to 1.
+        '''
+        pass
+
+    def set_current_limit(self, amps):
+        '''
+        This sets the maximum current supplied to the motor before the motor stops.
+
+        The argument is in units of amps (obviously)
         '''
         pass

@@ -33,3 +33,6 @@ class SparkMax(CANSparkMax, Timed):
             seconds,
             percent
         )
+
+    def set_current_limit(self, amps):
+        self.setSmartCurrentLimit(amps)

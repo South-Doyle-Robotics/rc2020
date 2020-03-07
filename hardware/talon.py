@@ -1,4 +1,4 @@
-from ctre import WPI_TalonFX, FeedbackDevice
+from ctre import WPI_TalonFX, FeedbackDevice, SupplyCurrentLimitConfiguration
 from traits import Motor, Encoder, Timed, implements
 from tools import Timed
 
@@ -37,4 +37,9 @@ class Falcon(WPI_TalonFX, Timed):
             self.set_percent_output,
             seconds,
             percent
+        )
+
+    def set_current_limit(self, amps):
+        self.configSupplyCurrentLimit(
+            SupplyCurrentLimitConfiguration(True, 0, amps, 0.5)
         )
