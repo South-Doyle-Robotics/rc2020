@@ -9,6 +9,11 @@ class DriverController:
     axis = Controller.axis
     button = Controller.button
 
+    # Chassis
     forward = axis(1)
     turn = axis(2)
-    shift = button(1)
+    shift = button(6)
+
+    # Turret and Singulator
+    shoot = button(1)
+    intake = button(3)

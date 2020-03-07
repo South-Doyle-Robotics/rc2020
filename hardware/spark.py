@@ -1,6 +1,7 @@
 from rev import CANSparkMax, MotorType
 from traits import Motor, Encoder, implements
 
+
 @implements(Encoder, Motor)
 class SparkMax(CANSparkMax):
     def __init__(self, can_id):
@@ -9,7 +10,7 @@ class SparkMax(CANSparkMax):
 
     def set_percent_output(self, percent):
         super().set(percent)
-    
+
     def get_percent_output(self):
         return super().get()
 

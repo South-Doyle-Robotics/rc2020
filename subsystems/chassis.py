@@ -1,3 +1,4 @@
+from os.path import dirname
 from constants import LEFT_CHASSIS_MOTORS, RIGHT_CHASSIS_MOTORS
 from wpilib import SpeedControllerGroup
 from hardware import Falcon, DoubleSolenoid
@@ -5,8 +6,6 @@ from traits import implements, DriveTrain, Gyro
 from ctre import Orchestra
 from math import pi
 from os.path import dirname
-
-orchestra = Orchestra()
 
 
 @implements(DriveTrain)
