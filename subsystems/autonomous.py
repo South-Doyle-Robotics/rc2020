@@ -72,7 +72,7 @@ class Autonomous:
         '''
         Returns whether or not the autonomous has completed all of its paths.
 
-        is_paused(self) -> bool
+        is_done(self) -> bool
         '''
         return self.current_trajectory >= len(self.trajectories)
 

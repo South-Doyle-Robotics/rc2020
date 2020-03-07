@@ -12,6 +12,13 @@ MAGAZINE_RIGHT_MOTOR = 8
 
 SINGULATOR_IDS = [0, 0, 0, 0]  # Plug in these values later. Cheers!
 
+# This is the motor that feeds balls into the shooter.
+MAGAZINE_INDEX_MOTOR = None
+# This is the motor that takes in balls from the intake.
+MAGAZINE_FROM_INTAKE_MOTOR = None
+# This is the motor that moves the balls into the indexer.
+MAGAZINE_RIGHT_MOTOR = None
+
 TRACKWIDTH = 0.6477
 RAMSETE_MAX_VELOCITY = 4
 RAMSETE_MAX_ACCELERATION = 3

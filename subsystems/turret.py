@@ -6,7 +6,6 @@ from math import pi
 from tools import Timer
 
 from .camera import Limelight
-# We can use the Limelight to get the x_position of our centroid so we can center the turret
 
 
 # For whatever our turn motor is. Neos are 42, Falcons are 2048
