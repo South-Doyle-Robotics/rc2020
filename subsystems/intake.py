@@ -7,7 +7,7 @@ class Intake:
     The object thats responsible for managing the intake
     '''
 
-    INTAKE_SPEED = 0.5
+    INTAKE_SPEED = 0.25
 
     def __init__(self):
         self.motor = SparkMax(INTAKE_MOTOR)
@@ -21,7 +21,7 @@ class Intake:
         idle(self)
         '''
         self.motor.set_percent_output(0)
-        self.solenoid.reverse()
+        self.solenoid.forward()
 
     def intake(self):
         '''
@@ -30,4 +30,4 @@ class Intake:
         intake(self)
         '''
         self.motor.set_percent_output(self.INTAKE_SPEED)
-        self.solenoid.forward()
+        self.solenoid.reverse()

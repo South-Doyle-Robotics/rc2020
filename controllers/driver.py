@@ -12,8 +12,8 @@ class DriverController:
     # Chassis
     forward = axis(1)
     turn = axis(2)
-    shift = button(6)
+    shift = button(1)
 
     # Turret and Singulator
-    shoot = button(1)
+    shoot = button(2)
     intake = button(3)

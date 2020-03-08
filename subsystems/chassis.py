@@ -22,7 +22,7 @@ class Chassis:
         self.right_motors = [self.right_master, *
                              list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:]))]
 
-        self.shifter = DoubleSolenoid(0, 1)
+        self.shifter = DoubleSolenoid(7, 0)
         self.set_low_gear()
 
     def set_low_gear(self):

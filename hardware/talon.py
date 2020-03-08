@@ -1,5 +1,5 @@
 from ctre import WPI_TalonFX, FeedbackDevice, SupplyCurrentLimitConfiguration
-from traits import Motor, Encoder, Timed, implements
+from traits import Motor, Encoder, implements
 from tools import Timed
 
 
