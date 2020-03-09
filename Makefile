@@ -6,18 +6,17 @@ SH=powershell
 all: clean path deploy
 
 .PHONY: deploy
-deploy: clean
+deploy:
 	$(SH) $(PYTHON) ./robot.py deploy --team 6517
 
 .PHONY: path
 path: clean
 	$(SH) ../pathweaver/bin/pathweaver.bat
-	$(SH) "cd paths; Move-item ../output/*"
+	$(SH) "cd paths; Move-item ../../pathweaver/output/*"
 
 .PHONY: clean
 clean:
 	$(SH) rm -R paths/*
-	$(SH) rm -R output/*
 	- $(SH) rm .deploy_cfg
 	- $(SH) rm .install_config
 	- $(SH) rm -R okpg_cache

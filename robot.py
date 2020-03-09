@@ -4,7 +4,7 @@ from subsystems.turret import Turret
 from wpilib import Joystick, run, TimedRobot
 from wpilib import TimedRobot, run
 from controllers import DriverController, ShooterController
-from subsystems import Chassis, Turret, Autonomous, Magazine, Intake
+from subsystems import Chassis, Turret, Autonomous, Magazine, Intake, Climber
 from hardware import ADXRS450
 from tools import Timer
 from constants import kS, kV, TRACKWIDTH, TURRET_SHOOT_MOTORS
@@ -27,16 +27,17 @@ trajectories = list(
 class Kthugdess(TimedRobot):
     def robotInit(self):
         self.chassis = Chassis()
+        self.climber = Climber()
         self.turret = Turret()
         self.gyro = ADXRS450()
         self.intake = Intake()
         self.mag = Magazine()
         self.controller = DriverController(0)
         self.chassis.reset_encoders()
-
         self.auto = Autonomous(kS, kV, TRACKWIDTH, trajectories)
-
         self.reset()
+
+        self.auto_timer = Timer()
 
     def reset(self):
         self.turret.reset()
@@ -49,23 +50,57 @@ class Kthugdess(TimedRobot):
     def autonomousPeriodic(self):
         self.turret.zero()
         if self.auto.is_paused():
-            self.auto.resume(self.chassis, self.gyro)
+            self.turret.shoot()
+            if self.auto_timer.get() < 1.5:
+                self.intake.idle()
+                self.mag.stop()
+                self.turret.track_limelight()
+            elif self.auto_timer.get() < 4:
+                self.shoot(True)
+            else:
+                self.auto.resume(self.chassis, self.gyro)
         elif not self.auto.is_done():
+            self.auto_timer.start()
             self.auto.update(self.chassis, self.gyro)
+            self.turret.idle()
+            self.intake.intake()
+            self.mag.intake()
+            self.turret.track_limelight()
+        else:
+            self.shoot(False)
+            self.turret.idle()
+            self.mag.stop()
 
     def teleopPeriodic(self):
+        print("angle", self.gyro.get_clockwise_degrees())
         self.turret.zero()
+
+        if self.controller.deploy_climb():
+            self.climber.deploy()
+        if self.controller.lower_climb():
+            self.climber.lower()
+
+        if self.controller.retract_climb():
+            self.climber.retract()
+        elif self.controller.extend_climb():
+            self.climber.extend()
+        else:
+            self.climber.stop()
+
         if self.controller.intake():
-            # self.intake.intake()
+            self.intake.intake()
             self.mag.intake()
         else:
-            # self.intake.idle()
+            self.intake.idle()
             self.shoot(self.controller.shoot())
 
         if self.controller.shift():
             self.chassis.set_high_gear()
         else:
             self.chassis.set_low_gear()
+
+        if self.controller.clear_jam():
+            self.mag.clear_jam()
 
         forward = self.controller.forward()
         turn = self.controller.turn()
@@ -77,6 +112,11 @@ class Kthugdess(TimedRobot):
         #       "ccw", self.turret.counterclockwise_limit_switch.get())
 
     def shoot(self, shoot):
+        if self.climber.is_deployed():
+            self.turret.goto_angle(self.turret.HOME_ANGLE)
+            self.mag.stop()
+            return
+
         if shoot:
             self.turret.shoot()
             self.turret.stop_turning()

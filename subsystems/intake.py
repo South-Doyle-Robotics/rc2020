@@ -7,7 +7,7 @@ class Intake:
     The object thats responsible for managing the intake
     '''
 
-    INTAKE_SPEED = 0.25
+    INTAKE_SPEED = 0.4
 
     def __init__(self):
         self.motor = SparkMax(INTAKE_MOTOR)
