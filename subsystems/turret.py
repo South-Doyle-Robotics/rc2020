@@ -50,7 +50,7 @@ class Turret:
 
         self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
         self.turn_motor.set_current_limit(1)
-        self.turn_pid = PIDController(0.41, 0.0021, 0.0125)
+        self.turn_pid = PIDController(0.41, 0.008, 0.0125)
 
         self.hood_motor = SparkMax(TURRET_HOOD_MOTOR)
         self.hood_motor.set_current_limit(1)
@@ -103,7 +103,7 @@ class Turret:
             self.turn_pid.setSetpoint(0)
             motor_speed = self.turn_pid.calculate(
                 self.limelight.get_target_screen_x())
-            self.rotate(motor_speed)
+            self.rotate(motor_speed) 
             self.track_distance(self.limelight.get_target_screen_y())
         else:
             self.hood_motor.set_percent_output(0)
@@ -137,6 +137,19 @@ class Turret:
         self.shoot_motor_1.set_percent_output(speed)
         self.shoot_motor_2.set_percent_output(-speed)
         self.timer.start()
+    
+    def shooter_stop(self):
+        '''
+        Stops the turret and the shooter for deploying the 
+        '''
+        speed = self.shoot_motor_1.get_percent_output()
+        if speed > 0:
+            speed -= .2
+        elif speed < 0:
+            speed += 0.2
+
+        self.shoot_motor_1.set_percent_output(speed)
+        self.shoot_motor_2.set_percent_output(-speed)
 
     def is_full_speed(self):
         '''

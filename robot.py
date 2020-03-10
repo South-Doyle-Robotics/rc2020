@@ -1,9 +1,8 @@
 from math import copysign
 from os.path import dirname, basename
 from subsystems.turret import Turret
-from wpilib import Joystick, run, TimedRobot
-from wpilib import TimedRobot, run
-from controllers import DriverController, ShooterController
+from wpilib import Joystick, run, TimedRobot, CameraServer
+from controllers import XBoxController, JoystickController, ShooterController
 from subsystems import Chassis, Turret, Autonomous, Magazine, Intake, Climber
 from hardware import ADXRS450
 from tools import Timer
@@ -26,18 +25,21 @@ trajectories = list(
 @run
 class Kthugdess(TimedRobot):
     def robotInit(self):
+        CameraServer.launch()
         self.chassis = Chassis()
         self.climber = Climber()
         self.turret = Turret()
         self.gyro = ADXRS450()
         self.intake = Intake()
         self.mag = Magazine()
-        self.controller = DriverController(0)
+        self.controller = XBoxController(0)
         self.chassis.reset_encoders()
         self.auto = Autonomous(kS, kV, TRACKWIDTH, trajectories)
         self.reset()
+        self.other_camera = CameraServer()
 
         self.auto_timer = Timer()
+        self.other_camera.launch()
 
     def reset(self):
         self.turret.reset()
@@ -76,8 +78,11 @@ class Kthugdess(TimedRobot):
         self.turret.zero()
 
         if self.controller.deploy_climb():
+            self.turret.shooter_stop()
             self.climber.deploy()
-        if self.controller.lower_climb():
+            if self.climber.is_deployed():
+                self.turret.idle()
+        if self.controller.lower_climb():  # Added limit switch, Adam
             self.climber.lower()
 
         if self.controller.retract_climb():
@@ -88,6 +93,7 @@ class Kthugdess(TimedRobot):
             self.climber.stop()
 
         if self.controller.intake():
+            self.turret.track_limelight()
             self.intake.intake()
             self.mag.intake()
         else:

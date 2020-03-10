@@ -1,13 +1,14 @@
 from hardware import Servo, Falcon, DoubleSolenoid
-from constants import ELEVATOR_SERVO, ELEVATOR_SOLENOID_DEPLOY, ELEVATOR_SOLENOID_LOWER, ELEVATOR_MOTOR
-
+from constants import ELEVATOR_SERVO, ELEVATOR_SOLENOID_DEPLOY, ELEVATOR_SOLENOID_LOWER, ELEVATOR_MOTOR, ELEVATOR_LIMIT_SWITCH
+from wpilib import DigitalInput
+from tools import Timer
 
 class Climber:
     '''
     The object thats responsible for managing the intake
     '''
 
-    UNSPOOL_SPEED = 0.35
+    UNSPOOL_SPEED = 0.5
     SPOOL_SPEED = 0.8
 
     def __init__(self):
@@ -17,6 +18,12 @@ class Climber:
             ELEVATOR_SOLENOID_DEPLOY, ELEVATOR_SOLENOID_LOWER)
         self.lower()
         self.motor.reset()
+
+        self.limit_switch = DigitalInput(ELEVATOR_LIMIT_SWITCH)
+        self.timer = Timer()
+    
+    def is_limit_switch_pressed(self):
+        return self.limit_switch.get()
 
     def is_deployed(self):
         return self.has_been_deployed
@@ -31,7 +38,7 @@ class Climber:
     def lower(self):
         '''
         Pump the pneumatics to pull the climber back to its lowered state 
-        '''
+        '''    
         self.solenoid.reverse()
         self.has_been_deployed = False
 
@@ -46,16 +53,9 @@ class Climber:
         '''
         Retract the climber mechanism inward to pull the robot up
         '''
-        counts = self.motor.get_counts()
-        self.motor.set_percent_output(-self.SPOOL_SPEED)
-        # if abs(counts) > 4096 * 10:
-        #     print("FAST", counts)
-        #     self.motor.set_percent_output(-self.SPOOL_SPEED)
-        # else:
-        #     print("SLOW")
-        #     self.motor.set_percent_output(-0.08)
-
-        self.servo.set(1)
+        if not self.is_limit_switch_pressed():
+            self.motor.set_percent_output(-self.SPOOL_SPEED)
+            self.servo.set(1)
 
     def stop(self):
         self.motor.set_percent_output(0)

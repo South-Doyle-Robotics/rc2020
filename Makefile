@@ -37,4 +37,3 @@ install:
 	py -3 -m robotpy_installer install-opkg robotpy-ctre
 	py -3 -m robotpy_installer install-opkg robotpy-rev
 	py -3 -m robotpy_installer install-opkg robotpy-rev-color
-	py -3 -m robotpy_installer install-opkg robotpy-commands-v1
