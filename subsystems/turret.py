@@ -50,7 +50,7 @@ class Turret:
 
         self.turn_motor = SparkMax(TURRET_TURN_MOTOR)
         self.turn_motor.set_current_limit(1)
-        self.turn_pid = PIDController(0.41, 0.008, 0.0125)
+        self.turn_pid = PIDController(0.45, 0.001, 0.02)
 
         self.hood_motor = SparkMax(TURRET_HOOD_MOTOR)
         self.hood_motor.set_current_limit(1)
@@ -117,9 +117,9 @@ class Turret:
         # One of the motors will be reversed, so make sure the shoot motor has the correct ID!
         speed = self.shoot_motor_1.get_percent_output()
         if speed < self.turret_speed:
-            speed += 0.02
+            speed += 0.05
         elif speed > self.turret_speed:
-            speed -= 0.02
+            speed -= 0.05
 
         self.shoot_motor_1.set_percent_output(speed)
         self.shoot_motor_2.set_percent_output(-speed)
@@ -130,9 +130,9 @@ class Turret:
         '''
         speed = self.shoot_motor_1.get_percent_output()
         if speed < 0.5:
-            speed += 0.02
+            speed += 0.05
         elif speed > 0.5:
-            speed -= 0.02
+            speed -= 0.05
 
         self.shoot_motor_1.set_percent_output(speed)
         self.shoot_motor_2.set_percent_output(-speed)
@@ -203,18 +203,16 @@ class Turret:
         '''
         print("dist", distance)
         if distance < -0.76:
-            # long range
+            # extra long range
             print("extra long range")
-            self.turret_speed = 0.72
-
-
+            self.turret_speed = 0.805
             self.hood_goto(1)
         elif distance < -0.66:
             # long range
             print("long range")
-            self.turret_speed = 0.8
+            self.turret_speed = 0.82
             self.hood_goto(1)
-        elif distance < -0.25:
+        elif distance < -0.21:
             # mid range
             print("mid range")
             self.turret_speed = 0.9

@@ -53,11 +53,11 @@ class Kthugdess(TimedRobot):
         self.turret.zero()
         if self.auto.is_paused():
             self.turret.shoot()
-            if self.auto_timer.get() < 1.5:
+            if self.auto_timer.get() < 1:
                 self.intake.idle()
                 self.mag.stop()
                 self.turret.track_limelight()
-            elif self.auto_timer.get() < 4:
+            elif self.auto_timer.get() < 3:
                 self.shoot(True)
             else:
                 self.auto.resume(self.chassis, self.gyro)
@@ -74,7 +74,6 @@ class Kthugdess(TimedRobot):
             self.mag.stop()
 
     def teleopPeriodic(self):
-        print("angle", self.gyro.get_clockwise_degrees())
         self.turret.zero()
 
         if self.controller.deploy_climb():
