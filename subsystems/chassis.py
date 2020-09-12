@@ -3,7 +3,7 @@ from constants import LEFT_CHASSIS_MOTORS, RIGHT_CHASSIS_MOTORS
 from wpilib import SpeedControllerGroup
 from hardware import Falcon, DoubleSolenoid
 from traits import implements, DriveTrain, Gyro
-from ctre import Orchestra
+from ctre import Orchestra, NeutralMode
 from math import pi
 from os.path import dirname
 
@@ -11,7 +11,7 @@ from os.path import dirname
 @implements(DriveTrain)
 class Chassis:
     HIGH_GEAR_CONSTANT = 8.5
-    LOW_GEAR_CONSTANT = 18.38
+    LOW_GEAR_CONSTANT = 13.24
 
     def __init__(self):
         self.left_master = Falcon(LEFT_CHASSIS_MOTORS[0])
@@ -22,7 +22,10 @@ class Chassis:
         self.right_motors = [self.right_master, *
                              list(map(Falcon, RIGHT_CHASSIS_MOTORS[1:]))]
 
-        self.shifter = DoubleSolenoid(0, 1)
+        for motor in (self.left_motors + self.right_motors):
+            motor.setNeutralMode(NeutralMode.Brake)
+
+        self.shifter = DoubleSolenoid(7, 0)
         self.set_low_gear()
 
     def set_low_gear(self):

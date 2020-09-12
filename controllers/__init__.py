@@ -1,2 +1,2 @@
-from .driver import DriverController
+from .driver import JoystickController, XBoxController
 from .shooter import ShooterController

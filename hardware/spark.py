@@ -1,9 +1,10 @@
 from rev import CANSparkMax, MotorType
 from traits import Motor, Encoder, implements
+from tools import Timed
 
 
 @implements(Encoder, Motor)
-class SparkMax(CANSparkMax):
+class SparkMax(CANSparkMax, Timed):
     def __init__(self, can_id):
         super().__init__(can_id, MotorType.kBrushless)
         self.reset()
@@ -25,3 +26,13 @@ class SparkMax(CANSparkMax):
 
     def reset(self):
         self.getEncoder().setPosition(0)
+
+    def delayed_set_percent_output(self, percent, seconds):
+        self.do(
+            self.set_percent_output,
+            seconds,
+            percent
+        )
+
+    def set_current_limit(self, amps):
+        self.setSmartCurrentLimit(amps)
