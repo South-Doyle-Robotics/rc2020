@@ -200,7 +200,7 @@ class Turret:
         '''
         Takes the y crosshair-to-target distance to calculate the robot's x position from the target.
         '''
-        return (8.23 - (6.12*y_distance) + (8.21*(y_distance)**2) + (8.59*(y_distance)**3))
+        return (8.23 - (6.12*y_distance) + (8.21*(y_distance)**2) - (8.59*(y_distance)**3))
 
     def track_distance(self, distance):
         '''
