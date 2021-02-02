@@ -34,7 +34,6 @@ def angle_to_encoder(angle):
 #     return abs(distance) ** 0.695 + 0.2
 
 
-
 class Turret:
     HOME_ANGLE = 250/2
     HOOD_ENCODER_MAX = 95
@@ -92,6 +91,7 @@ class Turret:
 
         The shoot motor is constantly running at a low percentage until we need it.
         '''
+        print(self.limelight.get_target_screen_y())
         if self.is_locked():
             self.led.green()
         elif self.has_target():
@@ -103,8 +103,9 @@ class Turret:
             self.turn_pid.setSetpoint(0)
             motor_speed = self.turn_pid.calculate(
                 self.limelight.get_target_screen_x())
-            self.rotate(motor_speed) 
-            self.track_distance(self.limelight.get_target_screen_y())
+            self.rotate(motor_speed)
+            self.track_distance(self.calculate_x_distance(
+                self.limelight.get_target_screen_y()))
         else:
             self.hood_motor.set_percent_output(0)
             self.goto_angle(self.HOME_ANGLE)
@@ -137,7 +138,7 @@ class Turret:
         self.shoot_motor_1.set_percent_output(speed)
         self.shoot_motor_2.set_percent_output(-speed)
         self.timer.start()
-    
+
     def shooter_stop(self):
         '''
         Stops the turret and the shooter for deploying the 
@@ -195,13 +196,38 @@ class Turret:
         '''
         return self.turn_pid.atSetpoint()
 
+    def calculate_x_distance(self, y_distance):
+        '''
+        Takes the y crosshair-to-target distance to calculate the robot's x position from the target.
+        '''
+        return (8.23 - (6.12*y_distance) + (8.21*(y_distance)**2) + (8.59*(y_distance)**3))
+
     def track_distance(self, distance):
         '''
-        Set the distance to the target.
+        Set the distance to the target in real world x positions.
 
         This will update the hood position
         '''
-        print("dist", distance)
+
+        print("x distance: ", distance)
+        if distance < 21.5 and distance > 16.5:
+            print("Red Zone")
+            self.turret_speed = 0.75
+            self.hood_goto(0.5)
+        if distance < 16.5 and distance > 11.5:
+            print("Blue Zone")
+            self.turret_speed = 0.75
+            self.hood_goto(0.4)
+        if distance < 11.5 and distance > 6.5:
+            print("Yellow Zone")
+            self.turret_speed = 0.75
+            self.hood_goto(0.3)
+        if distance < 6.5:
+            print("Green Zone")
+            self.turret_speed = 0.75
+            self.hood_goto(0)
+
+        '''
         if distance < -0.76:
             # extra long range
             print("extra long range")
@@ -217,11 +243,12 @@ class Turret:
             print("mid range")
             self.turret_speed = 0.9
             self.hood_goto(1)
-        else :
+        else:
             # low range
             print("low range")
             self.turret_speed = 0.9
             self.hood_goto(0.7)
+            '''
 
         # current_encoder = self.hood_motor.get_counts()
         # self.hood_pid.setSetpoint(-distance_to_hood_encoder(distance))
