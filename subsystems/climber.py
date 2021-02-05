@@ -3,9 +3,10 @@ from constants import ELEVATOR_SERVO, ELEVATOR_SOLENOID_DEPLOY, ELEVATOR_SOLENOI
 from wpilib import DigitalInput
 from tools import Timer
 
+
 class Climber:
     '''
-    The object thats responsible for managing the intake
+    The object thats responsible for managing the climber
     '''
 
     UNSPOOL_SPEED = 0.5
@@ -21,7 +22,7 @@ class Climber:
 
         self.limit_switch = DigitalInput(ELEVATOR_LIMIT_SWITCH)
         self.timer = Timer()
-    
+
     def is_limit_switch_pressed(self):
         return self.limit_switch.get()
 
@@ -38,7 +39,7 @@ class Climber:
     def lower(self):
         '''
         Pump the pneumatics to pull the climber back to its lowered state 
-        '''    
+        '''
         self.solenoid.reverse()
         self.has_been_deployed = False
 

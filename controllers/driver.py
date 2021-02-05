@@ -42,9 +42,9 @@ class XBoxController:
     # Turret and Singulator
     shoot = button(1)
     intake = button(6)
-
-    # Turret and Singulator
     clear_jam = button(5)
+
+    # Climber
     deploy_climb = button(8)
     lower_climb = button(7)
     retract_climb = button(3)

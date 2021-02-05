@@ -51,6 +51,21 @@ class Kthugdess(TimedRobot):
 
     def autonomousPeriodic(self):
         self.turret.zero()
+        print(self.auto.is_paused())
+        print(self.auto_timer.get())
+        '''
+        Temporary new auto code. Making it do what we want it to do.
+        '''
+        '''
+        # - robot does the current path -
+        if self.auto.is_paused():  # When the robot finishes a path
+            self.shoot(True)
+            print("Done shooting")
+        if not self.auto.is_done():
+            self.auto.resume()
+        else:
+            self.shoot(False)
+            '''
         if self.auto.is_paused():
             self.turret.shoot()
             if self.auto_timer.get() < 1:

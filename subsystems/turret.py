@@ -11,20 +11,23 @@ from .camera import Limelight
 # For whatever our turn motor is. Neos are 42, Falcons are 2048
 counts_per_revolution = 42
 
+# When the motor turns 77 times, the turret turns 360 degrees
+motor_turns_per_full_rotation = 77
+
 
 def encoder_to_angle(encoder_counts):
     '''
     Takes the encoder count of the turret motor, and converts it to
     an equivalent angle of the turret.
     '''
-    return encoder_counts / 77 * 360
+    return encoder_counts / motor_turns_per_full_rotation * 360
 
 
 def angle_to_encoder(angle):
     '''
     Takes the angle of the turret and converts it into an encoder count.
     '''
-    return angle * 77 / 360
+    return angle * motor_turns_per_full_rotation / 360
 
 
 # def distance_to_hood_encoder(distance):
@@ -35,7 +38,9 @@ def angle_to_encoder(angle):
 
 
 class Turret:
+    # Max encoder value of the turret / 2 = Encoder value for the center
     HOME_ANGLE = 250/2
+    # The maximum limit that the hood can go, measured by hand.
     HOOD_ENCODER_MAX = 95
     '''
     The object thats responsible for managing the shooter
