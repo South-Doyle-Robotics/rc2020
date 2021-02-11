@@ -96,7 +96,7 @@ class Turret:
 
         The shoot motor is constantly running at a low percentage until we need it.
         '''
-        print(self.limelight.get_target_screen_y())
+        # print(self.limelight.get_target_screen_y())
         if self.is_locked():
             self.led.green()
         elif self.has_target():
@@ -214,21 +214,21 @@ class Turret:
         This will update the hood position
         '''
 
-        print("x distance: ", distance)
+        # print("x distance: ", distance)
         if distance < 21.5 and distance > 16.5:
-            print("Red Zone")
+            #print("Red Zone")
             self.turret_speed = 0.75
             self.hood_goto(0.5)
         if distance < 16.5 and distance > 11.5:
-            print("Blue Zone")
+            #print("Blue Zone")
             self.turret_speed = 0.75
             self.hood_goto(0.4)
         if distance < 11.5 and distance > 6.5:
-            print("Yellow Zone")
+            #print("Yellow Zone")
             self.turret_speed = 0.75
             self.hood_goto(0.3)
         if distance < 6.5:
-            print("Green Zone")
+            #print("Green Zone")
             self.turret_speed = 0.75
             self.hood_goto(0)
 

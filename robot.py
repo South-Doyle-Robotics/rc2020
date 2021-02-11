@@ -9,6 +9,7 @@ from tools import Timer
 from constants import kS, kV, TRACKWIDTH, TURRET_SHOOT_MOTORS
 from wpilib.trajectory import TrajectoryUtil
 from glob import glob as files
+import time
 
 
 filenames = files(dirname(__file__) + "/paths/*.json")
@@ -25,7 +26,7 @@ trajectories = list(
 @run
 class Kthugdess(TimedRobot):
     def robotInit(self):
-        CameraServer.launch()
+        # CameraServer.launch()
         self.chassis = Chassis()
         self.climber = Climber()
         self.turret = Turret()
@@ -36,10 +37,10 @@ class Kthugdess(TimedRobot):
         self.chassis.reset_encoders()
         self.auto = Autonomous(kS, kV, TRACKWIDTH, trajectories)
         self.reset()
-        self.other_camera = CameraServer()
+        # self.other_camera = CameraServer()
 
         self.auto_timer = Timer()
-        self.other_camera.launch()
+        # self.other_camera.launch()
 
     def reset(self):
         self.turret.reset()
@@ -51,8 +52,7 @@ class Kthugdess(TimedRobot):
 
     def autonomousPeriodic(self):
         self.turret.zero()
-        print(self.auto.is_paused())
-        print(self.auto_timer.get())
+        # self.turret.track_limelight()
         '''
         Temporary new auto code. Making it do what we want it to do.
         '''
@@ -66,17 +66,28 @@ class Kthugdess(TimedRobot):
         else:
             self.shoot(False)
             '''
-        if self.auto.is_paused():
-            self.turret.shoot()
+        if self.auto.is_paused() and self.turret.is_zeroed:
+            print("If auto is paused: " + str(self.auto.is_paused()) +
+                  "/ Timer: " + str(self.auto_timer.get()))
+            # self.turret.shoot()
+            # print("Shooting turret!")
             if self.auto_timer.get() < 1:
+                print("Pausing")
                 self.intake.idle()
                 self.mag.stop()
                 self.turret.track_limelight()
-            elif self.auto_timer.get() < 3:
-                self.shoot(True)
+            elif self.auto_timer.get() < 5:
+                if self.turret.is_locked():
+                    print("Shooting again")
+                    self.shoot(True)
+                    # time.sleep(3)
+                else:
+                    print("Not locked")
             else:
+                print("Resuming auto")
                 self.auto.resume(self.chassis, self.gyro)
-        elif not self.auto.is_done():
+        elif not self.auto.is_done():  # If the auto isn't paused but it's not done either
+            print("Start up")
             self.auto_timer.start()
             self.auto.update(self.chassis, self.gyro)
             self.turret.idle()
@@ -84,6 +95,7 @@ class Kthugdess(TimedRobot):
             self.mag.intake()
             self.turret.track_limelight()
         else:
+            print("Auto has ended")
             self.shoot(False)
             self.turret.idle()
             self.mag.stop()
