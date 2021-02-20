@@ -47,6 +47,7 @@ class Climber:
         '''
         Extend the climber mechanism outward to hook onto the bar
         '''
+        #print("In climber extend")
         self.motor.set_percent_output(self.UNSPOOL_SPEED)
         self.servo.set(0.46)
 
@@ -54,9 +55,16 @@ class Climber:
         '''
         Retract the climber mechanism inward to pull the robot up
         '''
-        if not self.is_limit_switch_pressed():
+        # The limit sswitch appears to be backwards. Flipped logic from
+        # NOT self.is_limit_switched_pressed to self.is_limit_switch_pressed
+        # print("limit switch:", self.is_limit_switch_pressed())
+        # print("spool speed", self.SPOOL_SPEED)
+        if self.is_limit_switch_pressed():
+            # print("in the limit switch loop")
             self.motor.set_percent_output(-self.SPOOL_SPEED)
             self.servo.set(1)
+        #else:
+            #print("NOT in the limit switch loop limit switch is pressed", self.is_limit_switch_pressed)
 
     def stop(self):
         self.motor.set_percent_output(0)

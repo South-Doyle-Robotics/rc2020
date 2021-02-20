@@ -37,6 +37,8 @@ class Kthugdess(TimedRobot):
         self.chassis.reset_encoders()
         self.auto = Autonomous(kS, kV, TRACKWIDTH, trajectories)
         self.reset()
+
+        # This was for the USB Camera
         # self.other_camera = CameraServer()
 
         self.auto_timer = Timer()
@@ -53,24 +55,42 @@ class Kthugdess(TimedRobot):
     def autonomousPeriodic(self):
         self.turret.zero()
         # self.turret.track_limelight()
+        """
+
         '''
-        Temporary new auto code. Making it do what we want it to do.
+        Rewriting the code but without needing to use timers! -> This will probably break
         '''
-        '''
-        # - robot does the current path -
-        if self.auto.is_paused():  # When the robot finishes a path
-            self.shoot(True)
-            print("Done shooting")
-        if not self.auto.is_done():
-            self.auto.resume()
+        print("If auto is paused: " + str(self.auto.is_paused()) +
+              "/ Timer: " + str(self.auto_timer.get()))
+
+        if self.auto.is_paused():
+            if self.turret.is_locked():
+                print("Shooting")
+                self.shoot(True)
+            else:
+                print("Not locked")
+                self.turret.track_limelight()
         else:
+            print("Going to next path")
+            self.auto.update(self.chassis, self.gyro)
+            # self.auto.resume(self.chassis, self.gyro)
+
+        if self.auto.is_done():
+            print("Auto has ended")
             self.shoot(False)
-            '''
+            self.turret.idle()
+            self.mag.stop()
+        else:
+            print("Intaking balls")
+            self.auto.update(self.chassis, self.gyro)
+            self.turret.idle()
+            self.intake.intake()
+            self.mag.intake()
+            # self.turret.track_limelight()
+"""
         if self.auto.is_paused() and self.turret.is_zeroed:
             print("If auto is paused: " + str(self.auto.is_paused()) +
                   "/ Timer: " + str(self.auto_timer.get()))
-            # self.turret.shoot()
-            # print("Shooting turret!")
             if self.auto_timer.get() < 1:
                 print("Pausing")
                 self.intake.idle()
@@ -78,9 +98,8 @@ class Kthugdess(TimedRobot):
                 self.turret.track_limelight()
             elif self.auto_timer.get() < 5:
                 if self.turret.is_locked():
-                    print("Shooting again")
+                    print("Shooting")
                     self.shoot(True)
-                    # time.sleep(3)
                 else:
                     print("Not locked")
             else:
@@ -124,6 +143,7 @@ class Kthugdess(TimedRobot):
             self.mag.intake()
         else:
             self.intake.idle()
+            print("Preparing to shoot, self.controller.shoot(): ", self.controller.shoot())
             self.shoot(self.controller.shoot())
 
         if self.controller.shift():

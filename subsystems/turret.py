@@ -109,8 +109,9 @@ class Turret:
             motor_speed = self.turn_pid.calculate(
                 self.limelight.get_target_screen_x())
             self.rotate(motor_speed)
-            self.track_distance(self.calculate_x_distance(
-                self.limelight.get_target_screen_y()))
+            # self.track_distance(self.calculate_x_distance(
+                # self.limelight.get_target_screen_y()))
+            self.track_distance(self.limelight.get_target_screen_y())
         else:
             self.hood_motor.set_percent_output(0)
             self.goto_angle(self.HOME_ANGLE)
@@ -161,7 +162,9 @@ class Turret:
         '''
         Returns if the motor is at full speed or not.
         '''
-        return self.timer.get() > 1
+        if self.timer.get() > 1:
+            print(self.shoot_motor_1.get_percent_output())
+            return True
 
     def zero(self):
         if not self.clockwise_limit_switch.get():
@@ -213,24 +216,24 @@ class Turret:
 
         This will update the hood position
         '''
-
+        '''
         # print("x distance: ", distance)
         if distance < 21.5 and distance > 16.5:
-            #print("Red Zone")
-            self.turret_speed = 0.75
-            self.hood_goto(0.5)
-        if distance < 16.5 and distance > 11.5:
-            #print("Blue Zone")
+            print("Red Zone")
             self.turret_speed = 0.75
             self.hood_goto(0.4)
+        if distance < 16.5 and distance > 11.5:
+            print("Blue Zone")
+            self.turret_speed = 0.75
+            self.hood_goto(0.65)
         if distance < 11.5 and distance > 6.5:
-            #print("Yellow Zone")
+            print("Yellow Zone")
             self.turret_speed = 0.75
-            self.hood_goto(0.3)
+            self.hood_goto(0.6)
         if distance < 6.5:
-            #print("Green Zone")
+            print("Green Zone")
             self.turret_speed = 0.75
-            self.hood_goto(0)
+            self.hood_goto(0.2)
 
         '''
         if distance < -0.76:
@@ -253,7 +256,6 @@ class Turret:
             print("low range")
             self.turret_speed = 0.9
             self.hood_goto(0.7)
-            '''
 
         # current_encoder = self.hood_motor.get_counts()
         # self.hood_pid.setSetpoint(-distance_to_hood_encoder(distance))
