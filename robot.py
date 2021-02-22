@@ -44,6 +44,8 @@ class Kthugdess(TimedRobot):
         self.auto_timer = Timer()
         # self.other_camera.launch()
 
+        self.hood_height = 0
+
     def reset(self):
         self.turret.reset()
         self.auto.reset()
@@ -121,7 +123,7 @@ class Kthugdess(TimedRobot):
 
     def teleopPeriodic(self):
         self.turret.zero()
-
+        '''
         if self.controller.deploy_climb():
             self.turret.shooter_stop()
             self.climber.deploy()
@@ -136,7 +138,7 @@ class Kthugdess(TimedRobot):
             self.climber.extend()
         else:
             self.climber.stop()
-
+        '''
         if self.controller.intake():
             self.turret.track_limelight()
             self.intake.intake()
@@ -153,6 +155,24 @@ class Kthugdess(TimedRobot):
 
         if self.controller.clear_jam():
             self.mag.clear_jam()
+
+        if self.controller.hood_increase():
+            print("increasing height")
+            self.turret.hood_increase()
+            # time.sleep(10)
+        
+        if self.controller.hood_decrease():
+            print("decreasing height")
+            self.turret.hood_decrease()
+            # time.sleep(10)
+        
+        if self.controller.turret_increase():
+            print("speeding up turret")
+            self.turret.turret_increase()
+        
+        if self.controller.turret_decrease():
+            print("slowing down turret")
+            self.turret.turret_decrease()
 
         forward = self.controller.forward()
         turn = self.controller.turn()
@@ -176,6 +196,9 @@ class Kthugdess(TimedRobot):
                 self.mag.dump()
             elif self.turret.is_full_speed():
                 self.mag.agitate()
+            print("hood height: " + str(self.turret.hood_height))
+            print("x value: " + str(self.turret.limelight.get_target_screen_x()) + " y value: " + str(self.turret.limelight.get_target_screen_y()))
+
         else:
             self.turret.track_limelight()
             self.turret.idle()

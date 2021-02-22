@@ -40,12 +40,16 @@ class XBoxController:
     shift = button(10)
 
     # Turret and Singulator
-    shoot = button(1)
+    shoot = button(1) # A button
     intake = button(6)
     clear_jam = button(5)
+    hood_increase = button(3) # X button
+    hood_decrease = button(4) # Y button
+    turret_increase = button(7) # Back button
+    turret_decrease = button(8) # Start button
 
     # Climber
-    deploy_climb = button(8)
-    lower_climb = button(7)
-    retract_climb = button(3)
-    extend_climb = button(4)
+    # lower_climb = button(7) # Back button
+    # deploy_climb = button(8) # Start button
+    # retract_climb = button(3) # X button
+    # extend_climb = button(4) # Y button

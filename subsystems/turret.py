@@ -7,6 +7,8 @@ from tools import Timer
 
 from .camera import Limelight
 
+import time
+
 
 # For whatever our turn motor is. Neos are 42, Falcons are 2048
 counts_per_revolution = 42
@@ -69,7 +71,8 @@ class Turret:
 
         self.led = LED(8)
 
-        self.turret_speed = 0.9
+        self.turret_speed = 0.5
+        self.hood_height = 0
 
     def reset(self):
         self.is_zeroed = False
@@ -216,24 +219,27 @@ class Turret:
 
         This will update the hood position
         '''
-        '''
         # print("x distance: ", distance)
+        # print(self.hood_height)
+        self.hood_goto(self.hood_height)
+        '''
         if distance < 21.5 and distance > 16.5:
             print("Red Zone")
             self.turret_speed = 0.75
-            self.hood_goto(0.4)
+            # self.hood_goto(0.4)
         if distance < 16.5 and distance > 11.5:
             print("Blue Zone")
             self.turret_speed = 0.75
-            self.hood_goto(0.65)
+            # self.hood_goto(0.65)
         if distance < 11.5 and distance > 6.5:
             print("Yellow Zone")
             self.turret_speed = 0.75
-            self.hood_goto(0.6)
+            # self.hood_goto(0.6)
         if distance < 6.5:
             print("Green Zone")
             self.turret_speed = 0.75
-            self.hood_goto(0.2)
+            # self.hood_goto(0.2)
+            '''
 
         '''
         if distance < -0.76:
@@ -256,6 +262,7 @@ class Turret:
             print("low range")
             self.turret_speed = 0.9
             self.hood_goto(0.7)
+        '''
 
         # current_encoder = self.hood_motor.get_counts()
         # self.hood_pid.setSetpoint(-distance_to_hood_encoder(distance))
@@ -274,6 +281,7 @@ class Turret:
         This function takes a value from 0 to 1.
         0 is all the way down, 1 is all the way extended.
         '''
+        print("hood height: " + str(self.hood_height) + " turret speed: " + str(self.turret_speed))
         if not self.is_zeroed:
             return
 
@@ -286,3 +294,23 @@ class Turret:
             self.hood_motor.set_percent_output(0)
         else:
             self.hood_motor.set_percent_output(motor_speed)
+
+    def hood_increase(self):
+        if self.hood_height <= 0.95:
+            self.hood_height += 0.05
+            time.sleep(0.5)
+    
+    def hood_decrease(self):
+        if self.hood_height >= 0.05:
+            self.hood_height -= 0.05
+            time.sleep(0.5)
+
+    def turret_increase(self):
+        if self.turret_speed <= 0.85:
+            self.turret_speed += 0.05
+            time.sleep(0.5)
+    
+    def turret_decrease(self):
+        if self.turret_speed >= 0.55:
+            self.turret_speed -= 0.05
+            time.sleep(0.5)
