@@ -23,11 +23,21 @@ class Climber:
         self.limit_switch = DigitalInput(ELEVATOR_LIMIT_SWITCH)
         self.timer = Timer()
 
+        self.has_been_extended = False
+        self.extend_position = 0.46
+
     def is_limit_switch_pressed(self):
         return self.limit_switch.get()
 
     def is_deployed(self):
         return self.has_been_deployed
+
+    def is_extended(self):
+        return self.has_been_extended and self.servo_at_position(self.extend_position)
+
+    def servo_at_position(self, position):
+        if self.servo.get() == position:
+            return True
 
     def deploy(self):
         '''
@@ -48,14 +58,15 @@ class Climber:
         Extend the climber mechanism outward to hook onto the bar
         '''
         #print("In climber extend")
-        self.motor.set_percent_output(self.UNSPOOL_SPEED)
-        self.servo.set(0.46)
+        # self.motor.set_percent_output(self.UNSPOOL_SPEED)
+        self.servo.set(self.extend_position)
+        self.has_been_extended = True
 
     def retract(self):
         '''
         Retract the climber mechanism inward to pull the robot up
         '''
-        # The limit sswitch appears to be backwards. Flipped logic from
+        # The limit switch appears to be backwards. Flipped logic from
         # NOT self.is_limit_switched_pressed to self.is_limit_switch_pressed
         # print("limit switch:", self.is_limit_switch_pressed())
         # print("spool speed", self.SPOOL_SPEED)
@@ -63,8 +74,9 @@ class Climber:
             # print("in the limit switch loop")
             self.motor.set_percent_output(-self.SPOOL_SPEED)
             self.servo.set(1)
-        #else:
-            #print("NOT in the limit switch loop limit switch is pressed", self.is_limit_switch_pressed)
+        self.has_been_extended = False
+        # else:
+        #print("NOT in the limit switch loop limit switch is pressed", self.is_limit_switch_pressed)
 
     def stop(self):
         self.motor.set_percent_output(0)

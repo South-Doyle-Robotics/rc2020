@@ -107,6 +107,7 @@ class Path:
             # Calculate the target position using the trajectory, and get the chassis wheel speeds
             target_pose = self.trajectory.sample(self.timer.get())
             chassis_speed = self.ramsete.calculate(current_pose, target_pose)
+            # chassis_speed = self.ramsete.calculate(current_pose, target_pose, 0.5, 0.5)
             wheel_speeds = self.drive_kinematics.toWheelSpeeds(chassis_speed)
             l, r = wheel_speeds.left, wheel_speeds.right
 

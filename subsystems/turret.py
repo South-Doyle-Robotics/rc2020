@@ -2,7 +2,7 @@ from wpilib import SpeedControllerGroup, DigitalInput
 from wpilib.controller import PIDController
 from constants import TURRET_CLOCKWISE_LIMIT_SWITCH, TURRET_COUNTERCLOCKWISE_LIMIT_SWITCH, TURRET_TURN_MOTOR, TURRET_SHOOT_MOTORS, TURRET_HOOD_MOTOR
 from hardware import SparkMax, Falcon, LED
-from math import pi
+from math import pi, ceil
 from tools import Timer
 
 from .camera import Limelight
@@ -70,6 +70,11 @@ class Turret:
         self.led = LED(8)
 
         self.turret_speed = 0.9
+        # [hood angle, RPM]
+        self.turret_settings = [(0.2, 0.5), (0.45, 0.55), (0.55, 0.5),
+                                (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.6, 0.5), (0.65, 0.55)]
+        self.min_distance = 6.25
+        self.max_distance = 20.25
 
     def reset(self):
         self.is_zeroed = False
@@ -97,6 +102,7 @@ class Turret:
         The shoot motor is constantly running at a low percentage until we need it.
         '''
         # print(self.limelight.get_target_screen_y())
+        # print("Tracking limelight!")
         if self.is_locked():
             self.led.green()
         elif self.has_target():
@@ -109,10 +115,11 @@ class Turret:
             motor_speed = self.turn_pid.calculate(
                 self.limelight.get_target_screen_x())
             self.rotate(motor_speed)
-            # self.track_distance(self.calculate_x_distance(
-                # self.limelight.get_target_screen_y()))
-            self.track_distance(self.limelight.get_target_screen_y())
+            self.track_distance(self.calculate_x_distance(
+                self.limelight.get_target_screen_y()))
+            # self.track_distance(self.limelight.get_target_screen_y())
         else:
+            # print("Going to home angle " + str(self.is_zeroed))
             self.hood_motor.set_percent_output(0)
             self.goto_angle(self.HOME_ANGLE)
 
@@ -171,6 +178,8 @@ class Turret:
             self.turn_motor.reset()
             self.is_zeroed = True
 
+        # print(str(self.is_zeroed), "Zeroing!")
+
         if not self.is_zeroed:
             self.turn_motor.reset()
             self.hood_motor.reset()
@@ -216,8 +225,19 @@ class Turret:
 
         This will update the hood position
         '''
+        # print("x distance: ", str(distance))
+        if distance < 6.25:
+            print("Too close to shoot accurately!")
+        elif distance > 20.25:
+            print("Too far to shoot! Not enough data for this zone")
+        else:
+            index = ceil((distance - self.min_distance)/2)
+            hood_position = self.turret_settings[index][0]
+            self.hood_goto(hood_position)
+            self.turret_speed = self.turret_settings[index][1]
+            # print("Hood position: " + str(hood_position) + " Turret speed: " +
+            # str(self.turret_speed) + " Distance: " + str(distance) + " index value: " + str(index))
         '''
-        # print("x distance: ", distance)
         if distance < 21.5 and distance > 16.5:
             print("Red Zone")
             self.turret_speed = 0.75
@@ -235,6 +255,7 @@ class Turret:
             self.turret_speed = 0.75
             self.hood_goto(0.2)
 
+        '''
         '''
         if distance < -0.76:
             # extra long range
@@ -256,6 +277,7 @@ class Turret:
             print("low range")
             self.turret_speed = 0.9
             self.hood_goto(0.7)
+            '''
 
         # current_encoder = self.hood_motor.get_counts()
         # self.hood_pid.setSetpoint(-distance_to_hood_encoder(distance))
@@ -274,6 +296,7 @@ class Turret:
         This function takes a value from 0 to 1.
         0 is all the way down, 1 is all the way extended.
         '''
+        # print("Hood goto working")
         if not self.is_zeroed:
             return
 

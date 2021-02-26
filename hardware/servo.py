@@ -1,5 +1,6 @@
 import wpilib
 
+
 class Servo(wpilib.Servo):
     def __init__(self, pwm_channel):
         super().__init__(pwm_channel)

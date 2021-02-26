@@ -55,6 +55,7 @@ class Kthugdess(TimedRobot):
     def autonomousPeriodic(self):
         self.turret.zero()
         # self.turret.track_limelight()
+        # print(self.turret.is_zeroed)
         """
 
         '''
@@ -88,6 +89,8 @@ class Kthugdess(TimedRobot):
             self.mag.intake()
             # self.turret.track_limelight()
 """
+        print(self.auto.current_trajectory)
+
         if self.auto.is_paused() and self.turret.is_zeroed:
             print("If auto is paused: " + str(self.auto.is_paused()) +
                   "/ Timer: " + str(self.auto_timer.get()))
@@ -96,23 +99,29 @@ class Kthugdess(TimedRobot):
                 self.intake.idle()
                 self.mag.stop()
                 self.turret.track_limelight()
-            elif self.auto_timer.get() < 5:
-                if self.turret.is_locked():
-                    print("Shooting")
-                    self.shoot(True)
-                else:
-                    print("Not locked")
+            elif self.auto_timer.get() < 2:
+                self.turret.track_limelight()
+                if self.auto.current_trajectory == 1:
+                    if self.turret.is_locked():
+                        print("Shooting")
+                        self.shoot(True)
+                    else:
+                        print("Not locked")
             else:
                 print("Resuming auto")
                 self.auto.resume(self.chassis, self.gyro)
         elif not self.auto.is_done():  # If the auto isn't paused but it's not done either
+            if self.auto.current_trajectory == 0:
+                print("Intaking balls")
+                self.intake.intake()
+                self.mag.intake()
             print("Start up")
+            self.turret.track_limelight()
             self.auto_timer.start()
             self.auto.update(self.chassis, self.gyro)
             self.turret.idle()
             self.intake.intake()
             self.mag.intake()
-            self.turret.track_limelight()
         else:
             print("Auto has ended")
             self.shoot(False)
@@ -121,6 +130,8 @@ class Kthugdess(TimedRobot):
 
     def teleopPeriodic(self):
         self.turret.zero()
+        print(self.climber.servo.get())
+        # self.turret.goto_angle(self.turret.HOME_ANGLE)
 
         if self.controller.deploy_climb():
             self.turret.shooter_stop()
@@ -129,12 +140,15 @@ class Kthugdess(TimedRobot):
                 self.turret.idle()
         if self.controller.lower_climb():  # Added limit switch, Adam
             self.climber.lower()
-
         if self.controller.retract_climb():
             self.climber.retract()
         elif self.controller.extend_climb():
             self.climber.extend()
         else:
+            if self.climber.is_extended() and self.climber.servo_at_position(self.climber.extend_position):
+                print("At position")
+                # Whatever position is appropriate to "unlatch" the servo
+                self.climber.servo.set(1)
             self.climber.stop()
 
         if self.controller.intake():
@@ -143,7 +157,8 @@ class Kthugdess(TimedRobot):
             self.mag.intake()
         else:
             self.intake.idle()
-            print("Preparing to shoot, self.controller.shoot(): ", self.controller.shoot())
+            print("Preparing to shoot, self.controller.shoot(): ",
+                  self.controller.shoot())
             self.shoot(self.controller.shoot())
 
         if self.controller.shift():
@@ -162,6 +177,14 @@ class Kthugdess(TimedRobot):
         # self.turret.goto_angle(self.turret.HOME_ANGLE)
         # print("cw", self.turret.clockwise_limit_switch.get(),
         #       "ccw", self.turret.counterclockwise_limit_switch.get())
+
+    def disabledInit(self):
+        # self.turret.hood_goto(0)
+        pass
+
+    def disabledPeriodic(self):
+        # print("Disabling periodic!")
+        pass
 
     def shoot(self, shoot):
         if self.climber.is_deployed():
