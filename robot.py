@@ -53,84 +53,119 @@ class Kthugdess(TimedRobot):
     teleopInit = reset
 
     def autonomousPeriodic(self):
+        # Start the turret zeroing process
         self.turret.zero()
-        # self.turret.track_limelight()
-        # print(self.turret.is_zeroed)
-        """
 
         '''
-        Rewriting the code but without needing to use timers! -> This will probably break
+        Start the intake since our first path grabs 2 balls
+        We have 4 paths. The first one moves straight from start and picks up 2 balls.
+        The second path is a backwards J turn into position shoot
+        The third path is forward J turn into the trench to pick up balls
+        The fourth path is a really sharp turn back towards shooting position
         '''
-        print("If auto is paused: " + str(self.auto.is_paused()) +
-              "/ Timer: " + str(self.auto_timer.get()))
 
+        # print("Current path " + str(self.auto.current_trajectory))
         if self.auto.is_paused():
-            if self.turret.is_locked():
-                print("Shooting")
-                self.shoot(True)
+            if self.auto.current_trajectory == 1 or self.auto.current_trajectory == 3:
+                if self.auto_timer.get() < 0.85:
+                    print("Tracking turret for shooting")
+                    self.intake.intake()
+                    self.mag.intake()
+                    self.turret.track_limelight()
+                elif self.auto_timer.get() > 0.85 and self.auto_timer.get() < 2.35:
+                    print("Shooting")
+                    self.intake.idle()
+                    self.shoot(True)
+                else:
+                    print("Shooting done, proceeding to the next path.")
+                    self.shoot(False)
+                    self.auto.resume(self.chassis, self.gyro)
+                    self.intake.intake()
+                    self.mag.intake()
+                    
             else:
-                print("Not locked")
-                self.turret.track_limelight()
-        else:
-            print("Going to next path")
-            self.auto.update(self.chassis, self.gyro)
-            # self.auto.resume(self.chassis, self.gyro)
+                print("No need to shoot, proceed to the next path")
+                self.auto.resume(self.chassis, self.gyro)
+                self.intake.intake()
+                self.mag.intake()
 
-        if self.auto.is_done():
-            print("Auto has ended")
-            self.shoot(False)
-            self.turret.idle()
-            self.mag.stop()
-        else:
-            print("Intaking balls")
-            self.auto.update(self.chassis, self.gyro)
+        elif not self.auto.is_done():
+            self.turret.track_limelight()
+            '''
+            if self.auto.current_trajectory == 0:
+                print("Intaking balls")
+                self.turret.idle()
+                self.intake.intake()
+                self.mag.intake()
+                # self.turret.hood_goto(.6)
+                # self.turret_speed = .5
+               
+            elif self.auto.current_trajectory == 2:
+                print("Intaking balls")
+                self.turret.idle()
+                self.intake.intake()
+                self.mag.intake()
+                # self.turret.hood_goto(.8)
+                # self.turret_speed = .65
+            else:
+                self.turret.track_limelight()
+                self.turret.idle()
+                self.intake.idle()
+                self.mag.stop()'''
+            self.auto_timer.start()
+            print("Start up!!")
+
+            # For now, continually run the intake and magazine until we have to shoot. 3/3/2021
             self.turret.idle()
             self.intake.intake()
             self.mag.intake()
-            # self.turret.track_limelight()
-"""
-        print(self.auto.current_trajectory)
 
+            self.auto.update(self.chassis, self.gyro)
+        else:
+            print("Auto has ended")
+            self.shoot(False)
+
+        """
         if self.auto.is_paused() and self.turret.is_zeroed:
             print("If auto is paused: " + str(self.auto.is_paused()) +
                   "/ Timer: " + str(self.auto_timer.get()))
-            if self.auto_timer.get() < 1:
-                print("Pausing")
-                self.intake.idle()
-                self.mag.stop()
-                self.turret.track_limelight()
-            elif self.auto_timer.get() < 2:
-                self.turret.track_limelight()
-                if self.auto.current_trajectory == 1:
-                    if self.turret.is_locked():
-                        print("Shooting")
-                        self.shoot(True)
-                    else:
-                        print("Not locked")
+            # Change this number to the trajectory where you want to shoot things
+            if self.auto.current_trajectory == 1:
+                if self.auto_timer.get() < 0.75:
+                    print("Pausing")
+                    self.intake.idle()
+                    self.mag.stop()
+                    self.turret.track_limelight()
+                elif self.auto_timer.get() < 2.0:
+                    self.turret.track_limelight()
+                    print("Shooting")
+                    self.shoot(True)
+                else:
+                    print("Resuming auto, trajectory = 2")
+                    self.auto.resume(self.chassis, self.gyro)
             else:
                 print("Resuming auto")
                 self.auto.resume(self.chassis, self.gyro)
         elif not self.auto.is_done():  # If the auto isn't paused but it's not done either
-            if self.auto.current_trajectory == 0:
+            # Change this number to the trajectory where you want to intake balls
+            '''if self.auto.current_trajectory == 0 or self.auto.current_trajectory == 3:
                 print("Intaking balls")
                 self.intake.intake()
-                self.mag.intake()
+                self.mag.intake()'''
             print("Start up")
             self.turret.track_limelight()
             self.auto_timer.start()
             self.auto.update(self.chassis, self.gyro)
             self.turret.idle()
-            self.intake.intake()
-            self.mag.intake()
         else:
             print("Auto has ended")
             self.shoot(False)
             self.turret.idle()
             self.mag.stop()
-
+        """
     def teleopPeriodic(self):
         self.turret.zero()
-        print(self.climber.servo.get())
+        # print(self.climber.servo.get())
         # self.turret.goto_angle(self.turret.HOME_ANGLE)
 
         if self.controller.deploy_climb():

@@ -31,7 +31,7 @@ class Magazine:
         '''
         Assist the intake
         '''
-        self.intake_motor.set_percent_output(-0.4)
+        self.intake_motor.set_percent_output(-0.5)
         self.left_agitator.set_percent_output(0.1)
         self.right_agitator.set_percent_output(-0.1)
 

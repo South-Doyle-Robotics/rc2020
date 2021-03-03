@@ -20,6 +20,7 @@ class Intake:
 
         idle(self)
         '''
+        print("Idling intake!")
         self.motor.set_percent_output(0)
         self.solenoid.forward()
 
@@ -29,5 +30,6 @@ class Intake:
 
         intake(self)
         '''
+        print("Currently intaking!")
         self.motor.set_percent_output(self.INTAKE_SPEED)
         self.solenoid.reverse()

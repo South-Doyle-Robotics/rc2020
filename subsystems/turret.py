@@ -71,8 +71,11 @@ class Turret:
 
         self.turret_speed = 0.9
         # [hood angle, RPM]
+        # self.turret_settings = [(0.2, 0.5), (0.45, 0.55), (0.55, 0.5),
+                                # (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.6, 0.5), (0.65, 0.55)]
+
         self.turret_settings = [(0.2, 0.5), (0.45, 0.55), (0.55, 0.5),
-                                (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.6, 0.5), (0.65, 0.55)]
+                                (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.55, 0.5), (0.65, 0.55)]
         self.min_distance = 6.25
         self.max_distance = 20.25
 
@@ -92,6 +95,33 @@ class Turret:
         self.turn_pid.setSetpoint(angle / 45)
         motor_speed = self.turn_pid.calculate(current_angle)
         self.rotate(motor_speed)
+
+    def track_limelight_auto(self):
+        ''' 
+        This is used in our hacked autonomous. It tracks left/right but not hood angle
+        or RPMs. Those are set with empirical data 
+        '''
+                # print(self.limelight.get_target_screen_y())
+        # print("Tracking limelight!")
+        if self.is_locked():
+            self.led.green()
+        elif self.has_target():
+            self.led.yellow()
+        else:
+            self.led.red()
+
+        if self.has_target():
+            self.turn_pid.setSetpoint(0)
+            motor_speed = self.turn_pid.calculate(
+                self.limelight.get_target_screen_x())
+            self.rotate(motor_speed)
+            #self.track_distance(self.calculate_x_distance(
+             #   self.limelight.get_target_screen_y()))
+            # self.track_distance(self.limelight.get_target_screen_y())
+        else:
+            # print("Going to home angle " + str(self.is_zeroed))
+            # self.hood_motor.set_percent_output(0)
+            self.goto_angle(self.HOME_ANGLE)
 
     def track_limelight(self):
         '''
@@ -230,13 +260,15 @@ class Turret:
             print("Too close to shoot accurately!")
         elif distance > 20.25:
             print("Too far to shoot! Not enough data for this zone")
+            self.hood_goto(0.72)
+            self.turret_speed = 0.65
         else:
             index = ceil((distance - self.min_distance)/2)
             hood_position = self.turret_settings[index][0]
             self.hood_goto(hood_position)
             self.turret_speed = self.turret_settings[index][1]
-            # print("Hood position: " + str(hood_position) + " Turret speed: " +
-            # str(self.turret_speed) + " Distance: " + str(distance) + " index value: " + str(index))
+            print("Hood position: " + str(hood_position) + " Turret speed: " +
+            str(self.turret_speed) + " index value: " + str(index))
         '''
         if distance < 21.5 and distance > 16.5:
             print("Red Zone")
