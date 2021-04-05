@@ -55,6 +55,7 @@ class Kthugdess(TimedRobot):
     def autonomousPeriodic(self):\
             # Start the turret zeroing process
         # self.turret.zero()
+
         '''
         Start the intake since our first path grabs 2 balls
         We have 4 paths. The first one moves straight from start and picks up 2 balls.
@@ -134,8 +135,6 @@ class Kthugdess(TimedRobot):
             self.mag.intake()
         else:
             self.intake.idle()
-            print("Preparing to shoot, self.controller.shoot(): ",
-                  self.controller.shoot())
             self.shoot(self.controller.shoot())
 
         if self.controller.shift():

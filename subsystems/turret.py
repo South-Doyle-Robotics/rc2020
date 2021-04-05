@@ -45,6 +45,7 @@ class Turret:
     '''
     The object thats responsible for managing the shooter
     '''
+    
 
     def __init__(self):
         self.clockwise_limit_switch = DigitalInput(
@@ -74,9 +75,8 @@ class Turret:
         # self.turret_settings = [(0.2, 0.5), (0.45, 0.55), (0.55, 0.5),
                                 # (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.6, 0.5), (0.65, 0.55)]
 
-        # Seems we can't access that 0 index...
-        self.turret_settings = [(0.2, 0.5), (0.19, 0.44), (0.35, 0.5),
-                                (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.55, 0.5), (0.65, 0.55)]
+        self.turret_settings = [(0.2, 0.5), (0.45, 0.55), (0.55, 0.5),
+                                (0.55, 0.5), (0.6, 0.5), (0.55, 0.5), (0.55, 0.5), (0.55, 0.5)]
         self.min_distance = 6.25
         self.max_distance = 20.25
 
@@ -200,7 +200,7 @@ class Turret:
         '''
         Returns if the motor is at full speed or not.
         '''
-        if self.timer.get() > 1:
+        if self.timer.get() > 0:
             print(self.shoot_motor_1.get_percent_output())
             return True
 
@@ -256,14 +256,15 @@ class Turret:
 
         This will update the hood position
         '''
-
         # print("x distance: ", str(distance))
-        if distance < 6.25:
+        if distance <= 20.25:
             print("Too close to shoot accurately!")
+            self.hood_goto(0.57)
+            self.turret_speed = 0.5
         elif distance > 20.25:
-            print("The end zone!")
-            self.hood_goto(0.85)
-            self.turret_speed = 0.65
+            print("Too far to shoot! Not enough data for this zone")
+            self.hood_goto(0.57)
+            self.turret_speed = 0.5
         else:
             index = ceil((distance - self.min_distance)/2)
             hood_position = self.turret_settings[index][0]

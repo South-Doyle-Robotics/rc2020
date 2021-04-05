@@ -25,7 +25,7 @@ class Magazine:
         '''
         Checks if the motor underneath the shooter is at maximum voltage.
         '''
-        return self.timer.get() > 0.9
+        return self.timer.get() > 0
 
     def intake(self):
         '''
