@@ -65,6 +65,7 @@ class Kthugdess(TimedRobot):
 
         # print("Current path " + str(self.auto.current_trajectory))
         if self.auto.is_paused():
+            # For autonomous challenges
             self.auto.resume(self.chassis, self.gyro)
             '''if self.auto.current_trajectory == 1 or self.auto.current_trajectory == 3:
                 if self.auto_timer.get() < 0.85:
