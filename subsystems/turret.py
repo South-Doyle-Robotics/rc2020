@@ -259,11 +259,11 @@ class Turret:
         # print("x distance: ", str(distance))
         if distance <= 20.25:
             print("Too close to shoot accurately!")
-            self.hood_goto(0.57)
+            self.hood_goto(0.58)
             self.turret_speed = 0.5
         elif distance > 20.25:
             print("Too far to shoot! Not enough data for this zone")
-            self.hood_goto(0.57)
+            self.hood_goto(0.58)
             self.turret_speed = 0.5
         else:
             index = ceil((distance - self.min_distance)/2)
