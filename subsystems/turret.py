@@ -75,8 +75,9 @@ class Turret:
                                 # (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.6, 0.5), (0.65, 0.55)]
 
         # Seems we can't access that 0 index...
-        self.turret_settings = [(0.2, 0.5), (0.19, 0.44), (0.35, 0.5),
-                                (0.55, 0.5), (0.6, 0.5), (0.6, 0.5), (0.55, 0.5), (0.65, 0.55)]
+        self.turret_settings = [(0.2, 0.5), (0.05, 0.44), (0.35, 0.5),
+                                (0.55, 0.5), (0.6, 0.5), (0.65, 0.5), (0.65, 0.5), (0.65, 0.5)]
+                                #.7 hood zone 6 (old)
         self.min_distance = 6.25
         self.max_distance = 20.25
 
@@ -262,7 +263,7 @@ class Turret:
             print("Too close to shoot accurately!")
         elif distance > 20.25:
             print("The end zone!")
-            self.hood_goto(0.85)
+            self.hood_goto(0.95)
             self.turret_speed = 0.65
         else:
             index = ceil((distance - self.min_distance)/2)
